@@ -257,6 +257,21 @@ tr.detail td{text-align:left;background:var(--surface-2);padding:14px 16px 18px;
 .demo-video figcaption b{color:var(--ink)}
 @media (max-width:820px){.demo{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:520px){.vclock-tot{display:none}.vchip{font-size:11px}}
+
+.metodo-switch{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+#fMode{display:flex;flex-wrap:wrap;gap:6px}
+#fMode button{font:600 14px var(--f-body);border:1px solid var(--line-strong);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 16px;cursor:pointer}
+#fMode button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+#fMode button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.metodo-exp{margin:0;color:var(--ink-2);max-width:75ch;line-height:1.5}
+.metodo-exp b{color:var(--ink)}
+.metodo-cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.metodo-cmp div{border-radius:10px;padding:12px 14px;background:var(--surface-2);display:flex;flex-direction:column;gap:2px;border:2px solid transparent}
+.metodo-cmp div.on{border-color:var(--accent)}
+.metodo-cmp span{font:500 12px var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3)}
+.metodo-cmp b{font:800 22px var(--f-display);font-variant-numeric:tabular-nums}
+.metodo-cmp small{color:var(--ink-2);font-size:13px}
+@media (max-width:520px){.metodo-cmp{grid-template-columns:minmax(0,1fr)}}
 </style>
 
 <div class="wrap">
@@ -325,6 +340,12 @@ tr.detail td{text-align:left;background:var(--surface-2);padding:14px 16px 18px;
 <section class="lp-sec" id="sua-igreja">
   <div class="lp-head"><span class="eyebrow">A sua igreja</span><h2 class="lp-h2">Quanto tempo a sua igreja economizaria</h2>
   <p class="lp-lede">Procure a sua igreja na tabela e clique no nome para ver a estimativa de lançamentos por mês, o tempo à mão e o tempo com a ferramenta.</p></div>
+  <div class="metodo-switch">
+    <span class="flabel">Como estimar os lançamentos</span>
+    <div class="seg" id="fMode" role="group" aria-label="Método de estimativa"><button type="button" data-m="rec" aria-pressed="true">Pela receita</button><button type="button" data-m="mem" aria-pressed="false">Pela quantidade de membros</button></div>
+    <p class="metodo-exp" id="modeExp"></p>
+    <div class="metodo-cmp" id="modeCmp"></div>
+  </div>
   <section class="card wide mbfocus"><h2>Estimativa da igreja selecionada</h2><div class="reading" id="rdMb"></div></section>
   <section class="card tablecard">
   <div class="tablehead"><div><h2>Igrejas do Amazonas: lançamentos e tempo de digitação</h2><p class="sub" id="mbTblSub"></p></div><div class="fgroup search"><label class="flabel" for="fQ">Buscar igreja</label><input id="fQ" type="search" placeholder="Digite o nome da igreja…" autocomplete="off"></div></div>
@@ -335,6 +356,7 @@ tr.detail td{text-align:left;background:var(--surface-2);padding:14px 16px 18px;
   <ol class="metodo">
     <li><b>Receita de cada igreja.</b> A contribuição ministerial é um percentual fixo de 4,5% da receita. Por isso, receita = contribuição ÷ 4,5%. Como o percentual é fixo, a receita calculada mantém a proporção entre as igrejas.</li>
     <li><b>Lançamentos de receita.</b> O livro mostra quanto cada igreja recebeu, mas não quantos lançamentos ela fez. A ponte é o <b>valor médio de um lançamento</b>, tirado de uma igreja real que já registra tudo no CAFINPI: em 2024 ela teve R$ 166.151,59 de receita em 923 lançamentos (cada dízimo ou oferta registrado é um lançamento). R$ 166.151,59 ÷ 923 = <b>R$ 180 por lançamento</b>. Aplicamos essa média a todas: lançamentos por mês = receita do mês ÷ R$ 180. Exemplo: uma igreja que recebe R$ 5.760 no mês faz cerca de 5.760 ÷ 180 = 32 lançamentos.</li>
+    <li><b>Outra forma: pelos membros.</b> Também dá para estimar pela lista de membros da IDPB-AM: cada membro gera 2 lançamentos por mês (1 dízimo e 1 oferta). Na igreja de referência, com 50 membros, isso dá 100 lançamentos por mês, perto dos 77 que ela realmente fez. Como supõe que todos os membros contribuem todo mês, essa conta funciona como o teto da estimativa; a conta pela receita é o piso.</li>
     <li><b>Tempo de digitação.</b> À mão, consideramos 3 minutos por lançamento (conferir o extrato ou o envelope, achar o membro, separar dízimo e oferta, digitar e salvar). A ferramenta foi medido: 42 lançamentos em 5 minutos.</li>
   </ol>
   <p class="lede metodo-nota">São estimativas: o R$ 180 é a média de uma única igreja. Onde os dízimos e ofertas são, em média, maiores que isso, o número real de lançamentos é menor que o estimado; onde são menores, é maior. Esse valor e os 3 minutos podem ser ajustados em "Ver detalhes do cálculo", mais abaixo. A ordem de grandeza e a diferença entre o trabalho manual e a ferramenta se mantêm.</p>
@@ -868,7 +890,7 @@ const ROBO={n:42,min:5};
 const OBS={"AM|73":{2024:{rec:923,tot:1285}}}; // lançamentos reais no CAFINPI em 2024 // medição real: 42 lançamentos em 5 minutos (12/10/2026)
 const MP={ticket:CAL.rec/CAL.lanc,min:3};
 try{const s=JSON.parse(localStorage.getItem("idpb-mp2")||"{}");if(s.ticket>0)MP.ticket=s.ticket;if(s.min>0)MP.min=s.min}catch(e){}
-const MB={sel:null,sort:"l",dir:-1};
+const MB={sel:null,sort:"l",dir:-1,mode:"rec"};
 function mbYear(){return S.ano==="all"?2024:+S.ano}
 function mbRows(){
   const y=mbYear(),mes=y===2025?6:12;const q=norm(S.q.trim());
@@ -876,8 +898,8 @@ function mbRows(){
   for(const c of CHL){if(c.uf!=="AM")continue;const m=MEMB[c.n];if(!m)continue;
     const rec=both(c,y)[1];const membros=m[2];
     const recMes=rec/mes;
-    const lr=recMes/MP.ticket, lm=lr;const ob=OBS[c.k]&&OBS[c.k][y];const l=ob?ob.rec/mes:lr;
-    const rm=l*ROBO.min/ROBO.n;const red=l>0?1-rm/(l*MP.min):0;out.push({la:ob?ob.rec*(12/mes):l*12,red,ob,c,nome:c.nome,membros,m19:m[1],rec,recMes,rpm:membros>0?recMes/membros:null,lm,lr,l,h:l*MP.min/60,rm,eco:l*MP.min/60-rm/60,match:!q||norm(c.nome).includes(q)});}
+    const lr=recMes/MP.ticket, lm=membros*2;const ob0=OBS[c.k]&&OBS[c.k][y];const ob=MB.mode==="mem"?null:ob0;const l=MB.mode==="mem"?lm:(ob?ob.rec/mes:lr);
+    const rm=l*ROBO.min/ROBO.n;const red=l>0?1-rm/(l*MP.min):0;out.push({ob0,la:ob?ob.rec*(12/mes):l*12,red,ob,c,nome:c.nome,membros,m19:m[1],rec,recMes,rpm:membros>0?recMes/membros:null,lm,lr,l,h:l*MP.min/60,rm,eco:l*MP.min/60-rm/60,match:!q||norm(c.nome).includes(q)});}
   return{y,mes,rows:out};
 }
 function renderMemb(){
@@ -900,11 +922,11 @@ function renderMemb(){
   document.getElementById("mbRef").innerHTML=`<b>Referência:</b> dados reais do CAFINPI de uma igreja que fez 923 lançamentos de receita em 2024. Com eles, estimamos os lançamentos de cada igreja a partir do demonstrativo nacional. <b>A ferramenta</b> fez 42 lançamentos em 5 minutos.`;
   document.getElementById("mbCal").innerHTML=`<b>Igreja de referência:</b> em 2024, uma igreja que usa o CAFINPI teve receita de R$ 166.151,59 e fez 923 lançamentos de receita (cerca de 77 por mês). Cada lançamento de receita valeu em média ${brl(CAL.rec/CAL.lanc,2)} (R$ 166.151,59 ÷ 923). Os lançamentos de receita de cada igreja são a receita mensal de 2024 dividida por esse valor; o anual é 12 vezes isso. <b>Por que a receita e não o número de membros:</b> cada membro da igreja de referência gera cerca de 5 vezes a receita do membro típico do AM; aplicar o ritmo por membro dela às outras igrejas inflaria os números. <b>Ritmo da ferramenta:</b> em 12/10/2026 ela fez 42 lançamentos em 5 minutos, cerca de 7 segundos por lançamento (8,4 por minuto). <b>A conta é conservadora:</b> a receita das demais igrejas é estimada pela contribuição de 4,5% e, na igreja de referência, a receita real foi 2,3 vezes a estimada; se isso se repetir, os lançamentos reais são maiores que os mostrados. A estimativa vem de uma única igreja de referência: com dados reais de mais igrejas ela fica mais precisa.`;
   drawMbScatter(R,corr,slope,icpt,per);drawMbLanc(R,per);renderMbTable(rows,per,mes);
-  const byRec=[...R].sort((a,b)=>a.rec-b.rec);const mid=byRec[Math.floor((byRec.length-1)/2)];const pick=MB.sel&&R.find(r=>r.c.k===MB.sel)||mid||sab||R[0];mbRead(pick,per);
+  const byRec=[...R].sort((a,b)=>a.rec-b.rec);const mid=byRec[Math.floor((byRec.length-1)/2)];const pick=MB.sel&&R.find(r=>r.c.k===MB.sel)||mid||sab||R[0];mbRead(pick,per);if(typeof renderMode==="function")renderMode();
 }
 function mbRead(r,per){if(!r)return;MB.sel=r.c.k;
   const pos=r.rpm!=null?r.rpm:0;
-  document.getElementById("rdMb").innerHTML=r.ob?`<span class="rk">IDPB ${esc(r.nome)} · ${per}</span><q>A IDPB ${esc(r.nome)} fez ${r.ob.rec.toLocaleString("pt-BR")} lançamentos de receitas em ${mbYear()}. Foram cerca de ${Math.round(r.l).toLocaleString("pt-BR")} lançamentos de receita por mês no CAFINPI: perto de ${fmtT(r.h*60)} de digitação manual, que a ferramenta faz em cerca de ${fmtT(r.rm)} a partir do extrato e da digitalização de envelopes de dízimos e oferta.</q><span class="names"><b>Dados reais de ${mbYear()}:</b> ${r.ob.rec.toLocaleString("pt-BR")} lançamentos de receita no CAFINPI. À mão, a ${MP.min.toLocaleString("pt-BR")} min por lançamento, isso levou cerca de <b>${fmtT(r.ob.rec*MP.min)}</b> no ano. A ferramenta faria os ${r.ob.rec.toLocaleString("pt-BR")} lançamentos em cerca de <b>${fmtT(r.ob.rec*ROBO.min/ROBO.n)}</b>.</span>`:`<span class="rk">IDPB ${esc(r.nome)} · ${per}</span><q>A IDPB ${esc(r.nome)} faz cerca de ${Math.round(r.l*12).toLocaleString("pt-BR")} lançamentos de receitas por ano. São cerca de ${Math.round(r.l).toLocaleString("pt-BR")} lançamentos de receita por mês no CAFINPI: perto de ${fmtT(r.h*60)} de digitação manual, que a ferramenta faz em cerca de ${fmtT(r.rm)} a partir do extrato e da digitalização de envelopes de dízimos e oferta.</q><span class="names">Estimativa a partir do demonstrativo nacional. À mão, a ${MP.min.toLocaleString("pt-BR")} min por lançamento, seriam cerca de <b>${fmtT(r.l*12*MP.min)}</b> no ano; a ferramenta faria os ${Math.round(r.l*12).toLocaleString("pt-BR")} lançamentos em cerca de <b>${fmtT(r.l*12*ROBO.min/ROBO.n)}</b>.</span>`;
+  document.getElementById("rdMb").innerHTML=r.ob?`<span class="rk">IDPB ${esc(r.nome)} · ${per}</span><q>A IDPB ${esc(r.nome)} fez ${r.ob.rec.toLocaleString("pt-BR")} lançamentos de receitas em ${mbYear()}. Foram cerca de ${Math.round(r.l).toLocaleString("pt-BR")} lançamentos de receita por mês no CAFINPI: perto de ${fmtT(r.h*60)} de digitação manual, que a ferramenta faz em cerca de ${fmtT(r.rm)} a partir do extrato e da digitalização de envelopes de dízimos e oferta.</q><span class="names"><b>Dados reais de ${mbYear()}:</b> ${r.ob.rec.toLocaleString("pt-BR")} lançamentos de receita no CAFINPI. À mão, a ${MP.min.toLocaleString("pt-BR")} min por lançamento, isso levou cerca de <b>${fmtT(r.ob.rec*MP.min)}</b> no ano. A ferramenta faria os ${r.ob.rec.toLocaleString("pt-BR")} lançamentos em cerca de <b>${fmtT(r.ob.rec*ROBO.min/ROBO.n)}</b>.</span>`:`<span class="rk">IDPB ${esc(r.nome)} · ${per}</span><q>A IDPB ${esc(r.nome)} faz cerca de ${Math.round(r.l*12).toLocaleString("pt-BR")} lançamentos de receitas por ano. São cerca de ${Math.round(r.l).toLocaleString("pt-BR")} lançamentos de receita por mês no CAFINPI: perto de ${fmtT(r.h*60)} de digitação manual, que a ferramenta faz em cerca de ${fmtT(r.rm)} a partir do extrato e da digitalização de envelopes de dízimos e oferta.</q><span class="names">${MB.mode==="mem"?`Estimativa pelos membros: ${r.membros.toLocaleString("pt-BR")} membros × 2 lançamentos por mês (1 dízimo + 1 oferta).${r.ob0?` Nos dados reais do CAFINPI, essa igreja fez cerca de ${Math.round(r.ob0.rec/12)} lançamentos de receita por mês em 2024.`:""}`:"Estimativa a partir do demonstrativo nacional."} À mão, a ${MP.min.toLocaleString("pt-BR")} min por lançamento, seriam cerca de <b>${fmtT(r.l*12*MP.min)}</b> no ano; a ferramenta faria os ${Math.round(r.l*12).toLocaleString("pt-BR")} lançamentos em cerca de <b>${fmtT(r.l*12*ROBO.min/ROBO.n)}</b>.</span>`;
   document.querySelectorAll("#mbScatter circle.pt").forEach(c=>{const on=c.dataset.k===r.c.k;c.setAttribute("r",on?8:5);c.setAttribute("stroke",on?"var(--ink)":"var(--surface)");c.setAttribute("stroke-width",on?2.5:1)});
   document.querySelectorAll("#mbTbl tbody tr").forEach(t=>t.setAttribute("aria-selected",t.dataset.k===r.c.k));
 }
@@ -979,5 +1001,17 @@ const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
 if(reduce){play.textContent="Assistir"}else{const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){if(v.paused&&!v.dataset.user)v.play().catch(()=>{play.textContent="Assistir"})}else if(!v.paused)v.pause()}),{threshold:.35});io.observe(v)}
 play.addEventListener("click",()=>{v.dataset.user="1"});
 })();
+
+function renderMode(){
+  const ex=document.getElementById("modeExp");if(!ex)return;
+  document.querySelectorAll("#fMode button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.m===MB.mode));
+  ex.innerHTML=MB.mode==="mem"?'Cada membro gera <b>2 lançamentos por mês</b>: 1 dízimo e 1 oferta. Na igreja de referência, com 50 membros, isso dá 100 lançamentos por mês. Considera que <b>todos os membros contribuem uma vez por mês</b>, então funciona como o <b>teto</b> da estimativa.':'O livro da Convenção mostra quanto cada igreja recebeu. Dividimos a receita pelo <b>valor médio de um lançamento (R$ 180)</b>, tirado de uma igreja real que usa o CAFINPI. É a estimativa <b>mais conservadora</b>.';
+  const save=MB.mode;const tot=m=>{MB.mode=m;const {rows}=mbRows();MB.mode=save;const R=rows.filter(r=>r.membros>0);const L=sum(R.map(r=>r.l));return{L,n:R.length}};
+  const a=tot("rec"),b=tot("mem");const fh=v=>hf(v);
+  document.getElementById("modeCmp").innerHTML=`<div class="${save==="rec"?"on":""}"><span>Pela receita</span><b>${lf(a.L)} lançamentos/mês</b><small>${fh(a.L*MP.min)} à mão · ${fh(a.L*ROBO.min/ROBO.n)} com a ferramenta</small></div><div class="${save==="mem"?"on":""}"><span>Pelos membros</span><b>${lf(b.L)} lançamentos/mês</b><small>${fh(b.L*MP.min)} à mão · ${fh(b.L*ROBO.min/ROBO.n)} com a ferramenta</small></div>`;
+}
+document.getElementById("fMode")&&document.getElementById("fMode").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;MB.mode=b.dataset.m;renderMemb();renderMode()});
+
+try{renderMode()}catch(e){console.error(e)}
 </script>
 </body></html>
