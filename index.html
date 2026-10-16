@@ -1,4 +1,10 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body><title>CAFINPI com IA</title>
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "yyr2jsc1i1");
+</script></head><body><title>CAFINPI com IA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -299,6 +305,7 @@ tr.detail td{text-align:left;background:var(--surface-2);padding:14px 16px 18px;
 .mode-seg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
 .mode-seg button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 @media (max-width:420px){.topfix .brand{font-size:0}.topfix .brand b{font-size:15px;margin:0}.btn-cta.sm{white-space:normal;text-align:center;line-height:1.2}}
+.lgpd{margin:8px 0 0;font-size:12px;color:var(--ink-3);text-align:center}
 </style>
 
 <div class="wrap">
@@ -430,6 +437,7 @@ tr.detail td{text-align:left;background:var(--surface-2);padding:14px 16px 18px;
   <p class="cta-contact">WhatsApp: (92) 98402-6662</p>
 </section>
 
+<p class="lgpd">Esta página usa o Microsoft Clarity para entender, de forma anônima, como os visitantes navegam (cliques, rolagem e tempo na página).</p>
 <div hidden id="legacy">
   <div class="filters"><div class="fgroup"><div class="seg" id="fUF"></div></div><select id="fAno"><option value="all">all</option></select></div>
   <div class="tabs"><button type="button" id="tab-geral" data-tab="geral"></button><button type="button" id="tab-dist" data-tab="distribuicao"></button><button type="button" id="tab-sint" data-tab="sintese"></button></div>
@@ -1074,5 +1082,16 @@ const calc=()=>{const n=Math.max(0,+$("cRec").value||0)+Math.max(0,+$("cDesp").v
 ["cRec","cDesp","cMin"].forEach(id=>$(id).addEventListener("input",calc));
 $("cFill").addEventListener("click",()=>{const {rows}=mbRows();const r=rows.find(x=>x.c.k===MB.sel)||rows[0];if(!r)return;$("cRec").value=Math.round(r.l);calc();$("cFill").textContent=`Usando a estimativa da IDPB ${r.nome} (${Math.round(r.l)} receitas/mês). Escolha outra igreja na tabela e clique de novo.`});
 calc();})();
+
+(function(){const ev=n=>{try{window.clarity&&window.clarity("event",n)}catch(e){}};
+document.querySelectorAll('a[href^="https://wa.me/"]').forEach(a=>a.addEventListener("click",()=>{ev("agendar_whatsapp");ev(a.closest(".topfix")?"agendar_topo":a.closest(".hero")?"agendar_abertura":"agendar_final")}));
+let calcUsed=false;["cRec","cDesp","cMin"].forEach(id=>{const el=document.getElementById(id);el&&el.addEventListener("input",()=>{if(!calcUsed){calcUsed=true;ev("calculadora_usada")}})});
+const cf=document.getElementById("cFill");cf&&cf.addEventListener("click",()=>ev("calculadora_estimativa"));
+const v=document.getElementById("demoVid");let vp=false;v&&v.addEventListener("playing",()=>{if(!vp){vp=true;ev("video_play")}});
+document.querySelectorAll(".vbtn[data-rate='1']").forEach(b=>b.addEventListener("click",()=>ev("video_velocidade_real")));
+document.querySelectorAll(".mode-seg button[data-m='mem']").forEach(b=>b.addEventListener("click",()=>ev("metodo_membros")));
+const md=document.querySelector("details.metodo-det");md&&md.addEventListener("toggle",()=>{if(md.open)ev("metodo_aberto")});
+document.getElementById("mbTbl")&&document.getElementById("mbTbl").addEventListener("click",e=>{if(e.target.closest("tbody tr"))ev("tabela_igreja")});
+})();
 </script>
 </body></html>
