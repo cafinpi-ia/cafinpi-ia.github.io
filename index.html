@@ -1094,4 +1094,12 @@ const md=document.querySelector("details.metodo-det");md&&md.addEventListener("t
 document.getElementById("mbTbl")&&document.getElementById("mbTbl").addEventListener("click",e=>{if(e.target.closest("tbody tr"))ev("tabela_igreja")});
 })();
 </script>
+<script>
+/* Clarity: registra clique nos botões do WhatsApp */
+document.querySelectorAll('a[href*="wa.me"]').forEach(function (a) {
+  a.addEventListener('click', function () {
+    if (window.clarity) clarity('event', 'clique_whatsapp');
+  });
+});
+</script>
 </body></html>
